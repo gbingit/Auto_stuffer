@@ -2,7 +2,9 @@
 import openpyxl as xl
 def info_snatcher(path: str,
                   work_sheet: str,
-                  info_name, cat_row, search_row):
+                  info_name: str,
+                  cat_row: str,
+                  search_row: str):
     wb_on_hand = xl.load_workbook(path)
     ws_on_hand = wb_on_hand[work_sheet]
     for index, cell in enumerate(ws_on_hand[cat_row]):
