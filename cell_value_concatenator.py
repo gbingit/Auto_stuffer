@@ -1,3 +1,5 @@
+# 入参文件地址，工作簿名称，表格1，表格2，输出表格（可选）；
+# 讲表格2的str内容拼接到表格1的str内容上去
 import openpyxl as xl
 def cell_value_concatenator(file_path: str,
                             work_sheet: str,
