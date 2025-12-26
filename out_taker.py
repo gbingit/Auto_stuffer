@@ -26,6 +26,7 @@ def out_taker(file_path: str,
     red_fill = PatternFill(start_color='FF0000', end_color='FF0000', fill_type='solid')
     plate = {} # 先来个空盘子
     for row in range(2, ws.max_row + 1):
+        target_row = None
         if to_normalize_cfg(ws.cell(row, head_col_dic['Name']).value) == to_normalize_cfg(cfg): # 在Name列找目标cfg所在列
             target_row = row # 定为目标列
             print(target_row)
