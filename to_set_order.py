@@ -1,7 +1,7 @@
 # from dictionarization import to_dic_head_col
 from dictionarization import to_dic_head_col
 
-
+# 接收参数为excel文件地址，sheet，行，列，名字，返回一个装有相应名字的和订单数量的字典plate
 def to_set_order(file_path, work_sheet, row, col, name):
     import openpyxl as xl
     wb = xl.load_workbook(file_path)

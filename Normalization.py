@@ -9,4 +9,8 @@ def to_normalize_cfg(cfg):
 
 def to_lsplit_meaning(text):
     tem_body = str(text).lower().replace(',', ' ').replace('*', ' ')
-    return tem_body.split()
+    return tem_body.split() #这里split是做什么的❓
+# ✅基础示例
+# s = "Hello World 你好 世界"
+# result = s.split()
+# print(result)  # 输出：['Hello', 'World', '你好', '世界']
