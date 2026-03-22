@@ -1,4 +1,4 @@
-def to_dic_head_index(sheet, head_row = 1): #输出表头的index字典（从0开始）
+def to_dic_head_index(sheet, head_row: int = 1): #输出表头的index字典（从0开始）
     index_lib_0 = {}
     for index, cell in enumerate(sheet[head_row]):
         if cell.value is not None and cell.value != '':
@@ -6,7 +6,7 @@ def to_dic_head_index(sheet, head_row = 1): #输出表头的index字典（从0�
     return index_lib_0
 
 
-def to_dic_head_col(sheet, head_row = 1): # 输出表头的列数字典（从1开始）
+def to_dic_head_col(sheet, head_row: int = 1): # 输出表头的列数字典（从1开始）
     col_count_lib_0 = {}
     for index, cell in enumerate(sheet[head_row]):
         if cell.value is not None and cell.value != '':

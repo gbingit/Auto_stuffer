@@ -21,14 +21,14 @@ def out_taker(file_path: str,
     import openpyxl as xl
     wb = xl.load_workbook(file_path)
     ws = wb[work_sheet]
-    head_col_dic = to_dic_head_col(ws)
+    head_col_dic = to_dic_head_col(ws) # （这里可将function改良成可输入参数第几行是head，默认是1)
     # print(head_col_dic)
     red_fill = PatternFill(start_color='FF0000', end_color='FF0000', fill_type='solid')
     plate = {} # 先来个空盘子
     for row in range(2, ws.max_row + 1):
         target_row = None
         if to_normalize_cfg(ws.cell(row, head_col_dic['Name']).value) == to_normalize_cfg(cfg): # 在Name列找目标cfg所在列
-            target_row = row # 定为目标列
+            target_row = row # 定为目标行
             print(target_row)
             # print(type(ws.cell(target_row, head_col_dic['Input Qty']).value))
             break

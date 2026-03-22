@@ -54,12 +54,13 @@ for row in range(3, 15):
     elif len(target_cfgs) == 1:
         target_cfg = target_cfgs[0]
     else:
-        print(f"there are no cfgs designated to {target_HVE_code}")
+        print(f"there are no cfgs designated to {target_HVE_code}, please coordinate with DRI on solution")
     if target_cfg:
         cfg_order = to_set_order("/Users/edison/Desktop/J716 S2F/DVT2/FATP/C/stuff 练手/PWZM DVT2c Build Rules V5.xlsx",
                             'HVE 11_7 - J716C DVT-2 Build ru', row, 15, target_cfg)
         HVE_code_order[target_HVE_code] = cfg_order
         print(HVE_code_order)
+        print(f'{target_HVE_code} shoule be having {cfg_order[target_cfg]} {target_cfg}\n')
         # print(type(cfg_order[target_cfg]))
 
 
@@ -69,13 +70,14 @@ for row in range(3, 15):
 # 1.4. 再从1.3.中确定的config行里out-take出一个盘子里装着{"DVT2c-Mini1-A-N-36M":8}，同时就在Config表中的同行“Input Qty”列减去要拿的数量，如果不够就显示不够
 ## 是一把拿到位，还是一个一个拿？
         plate = out_taker(config_file_path, 'FATP (C)', target_cfg, cfg_order[target_cfg])
-        print(f'已经从Build Matrix中拿出{cfg_order[target_cfg]}个{target_cfg}，所以现在的盘子里装着{cfg_order[target_cfg]}个{target_cfg}')
+        print(f'已经从Build Matrix中拿出{cfg_order[target_cfg]}个{target_cfg}，所以现在的盘子里装着{cfg_order[target_cfg]}个{target_cfg}, and the plate looks like {plate}')
 
 
 
 # 1.5. 再把从1.4.拿出的盘子里的cfg一个一个放到STF的相应位置里
-## 如果S2F里location那一列的ADB cfg = BR 里的 No那一列，且S2F’Config 是空的，就定义一个空位，然后从盘子里拿出来一个放进去，直到盘子放完或者没有空位了
+## 如果S2F里location那一列的ADB cfg = BR 里的 Config那一列，且S2F’Config 是空的，就定义一个空位，然后从盘子里拿出来一个放进去，直到盘子放完或者没有空位了
         if type(plate) == dict:
+            print(f'Now fill in {target_HVE_code} cfg\n')
             for rows_S2F in range(1, S2F_sheet.max_row + 1):
                     if plate[target_cfg] == 0:
                         break
@@ -83,11 +85,14 @@ for row in range(3, 15):
                     == to_normalize_cfg(BR_HVE_sheet.cell(row, BR_HVE_head_dic['Config']).value) \
                     and not S2F_sheet.cell(rows_S2F, S2F_head_dic['Config']).value:
 
-                        print(rows_S2F)
+                        print(f'In S2F row No.{rows_S2F} needs {S2F_sheet.cell(rows_S2F, S2F_head_dic['Location']).value}; In BR row No. {row} requires {BR_HVE_sheet.cell(row, BR_HVE_head_dic['Config']).value} also; so S2F row No.{rows_S2F} is the target row to fill in the cfg {target_cfg} ')
                         available_cell = S2F_sheet.cell(rows_S2F, S2F_head_dic['Config'])
-                        plate[target_cfg] -= 1
-                        print(plate[target_cfg])
-                        available_cell.value = target_cfg
+                        print(f'--> Now take 1 {target_cfg} from the plate')
+                        plate[target_cfg] -= 1 #先从盘里拿出来
+                        print(f'--> Now the plate looks like {plate}') #再看看盘里还剩多少
+                        print(f'--> Now put the {target_cfg} in the S2F row No.{rows_S2F}')
+                        available_cell.value = target_cfg #再放进available的cell里面
+                        print(f'--> Now the S2F row No.{rows_S2F} has {target_cfg} filled in\n\n')
             S2F_file.save(S2F_file_path)
 
         else:
