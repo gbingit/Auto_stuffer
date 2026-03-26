@@ -10,7 +10,7 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 print(current_dir)
 # 把当前目录加入模块搜索路径
 sys.path.append(current_dir)
-
+# try
 import openpyxl as xl
 
 from Normalization import to_normalize, to_lsplit_meaning, to_normalize_cfg
