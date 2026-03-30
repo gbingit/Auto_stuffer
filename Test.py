@@ -51,6 +51,7 @@ def load_or_create_config(): #总结：创建或读取（已存在的话）"自�
             "BR_end_row": "14"
         }
         #这里只是先在内存里写好稍后要写进"自动配置.ini"里的内容，但是房子还没盖好东西进不去
+        #这里的config是个什么数据结构? 是个ConfigParser，但实质就是嵌套字典，调用的时候用config["FILES"]["S2F_file_path"]这样双重键
 
         with open(CONFIG_PATH, "w", encoding="utf-8") as f: #这里是盖房子的地方，open方法发现没有的话会自动创建一个空白的 自动配置.ini
             config.write(f) #并且写进去东西
