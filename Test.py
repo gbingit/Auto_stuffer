@@ -4,12 +4,101 @@ import configparser
 import openpyxl as xl
 from tkinter import Tk, filedialog, messagebox
 
-# 自定义工具导入（保持你原有功能不变）
-from Normalization import to_normalize, to_lsplit_meaning, to_normalize_cfg
-from cell_value_concatenator import cell_value_concatenator
-from dictionarization import to_dic_head_col
-from to_set_order import to_set_order
-from out_taker import out_taker
+def info_snatcher(path: str,
+                  work_sheet: str,
+                  info_name: str,
+                  cat_row: str,
+                  search_row: str):
+    wb_on_hand = xl.load_workbook(path)
+    ws_on_hand = wb_on_hand[work_sheet]
+    for index, cell in enumerate(ws_on_hand[cat_row]):
+        if cell.value == info_name:
+            target_index = index + 1 # 这是因为 enumerate 是从 0 开始计数，但 Excel 的列是从 1 开始计数，所以需要index + 1来转换。
+    return ws_on_hand.cell(row = search_row, column = target_index).value
+
+def cell_value_concatenator(file_path: str,
+                            work_sheet: str,
+                            cell1: str,
+                            cell2: str,
+                            output_cell: str = ''):
+    wb = xl.load_workbook(file_path)
+    ws = wb[work_sheet]
+    val1 = str(ws[cell1].value)
+    val2 = str(ws[cell2].value)
+    if output_cell:
+        ws[output_cell].value = val1 + val2
+    return val1 + val2
+
+def to_set_order(file_path, work_sheet, row, col, name):
+    import openpyxl as xl
+    wb = xl.load_workbook(file_path)
+    ws = wb[work_sheet]
+    # to_dic_head_col(ws)
+    qty = ws.cell(row, col).value
+    plate = {}
+    plate[name] = qty
+    return plate
+
+def out_taker(file_path: str,
+              work_sheet: str,
+              cfg: str,
+              quantity: int ): ## 可以连续拿出来吗？（即不倒空现有plate）：应该不行，不然会覆盖盘子，上一个盘子就找不到了
+    # import sys
+    # # 把dictionarization.py所在的目录路径添加到sys.path
+    # sys.path.append(
+    #     r"/Users/edison/PycharmProjects/PythonProject")  # 这里的r这里的 r 是 Python 里的原始字符串标记，作用是让字符串里的特殊字符（比如\、空格等）“原样保留”，不会被 Python 解析成转义符。# 举个例子：如果直接写路径 "C:\Users\test"，Python 会把 \U 当成转义符，导致报错；但加了 r 写成 r"C:\Users\test"，Python 就会把整个字符串当成 “原始内容”，不会解析转义，路径就能正确识别。
+    from openpyxl.styles import PatternFill
+    wb = xl.load_workbook(file_path)
+    ws = wb[work_sheet]
+    head_col_dic = to_dic_head_col(ws) # （这里可将function改良成可输入参数第几行是head，默认是1)
+    # print(head_col_dic)
+    red_fill = PatternFill(start_color='FF0000', end_color='FF0000', fill_type='solid')
+    plate = {} # 先来个空盘子
+    for row in range(2, ws.max_row + 1):
+        target_row = None
+        if to_normalize_cfg(ws.cell(row, head_col_dic['Name']).value) == to_normalize_cfg(cfg): # 在Name列找目标cfg所在列
+            target_row = row
+            print(target_row)
+            break
+    if not target_row:
+        return 'No cfg found'
+    elif int(ws.cell(target_row, head_col_dic['Input Qty']).value) >= int(quantity): # 如果目标cfg数量大于要拿的量，就开始拿出来（减去拿出来的数量）并标记红色
+        ws.cell(target_row, head_col_dic['Input Qty']).value -= quantity
+        ws.cell(target_row, head_col_dic['Input Qty']).fill = red_fill
+        wb.save(file_path)
+    else:
+        return f'No enough cfgs to take, leftover is {ws.cell(target_row, head_col_dic['Input Qty']).value}'
+
+    plate[cfg] = quantity
+    return plate
+
+def to_normalize(text):
+    return str(text).lower().replace(' ', '').replace(',', '')
+
+def to_normalize_address(address):
+    return str(address).lower().replace(' ','').replace(',', '').replace('Attn:', '')
+
+def to_normalize_cfg(cfg):
+    return str(cfg).lower().replace(' ', '').replace(',', '').replace('-', '')
+
+def to_lsplit_meaning(text):
+    tem_body = str(text).lower().replace(',', ' ').replace('*', ' ')
+    return tem_body.split()
+
+def to_dic_head_index(sheet, head_row: int = 1): #输出表头的index字典（从0开始）
+    index_lib_0 = {}
+    for index, cell in enumerate(sheet[head_row]):
+        if cell.value is not None and cell.value != '':
+            index_lib_0[cell.value] = index
+    return index_lib_0
+
+
+def to_dic_head_col(sheet, head_row: int = 1): # 输出表头的列数字典（从1开始）
+    col_count_lib_0 = {}
+    for index, cell in enumerate(sheet[head_row]):
+        if cell.value is not None and cell.value != '':
+            col_count_lib_0[cell.value] = index + 1
+    return col_count_lib_0
 
 # ====================== 【小白核心封装】 ======================
 # 自动隐藏命令行黑框（Windows）
