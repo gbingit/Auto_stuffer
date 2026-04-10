@@ -122,29 +122,29 @@ def load_or_create_config(): #总结：创建或读取（已存在的话）"自�
     config = configparser.ConfigParser()
     #用来读写"自动配置.ini"的操作工具，有了它才能读 .ini 文件；写 .ini 文件；按 [分组] 读取内容；存键值对：key=value
 
-    if not os.path.exists(CONFIG_PATH):
+    # if not os.path.exists(CONFIG_PATH):
         # 首次运行：自动生成配置
-        config["FILES"] = {
+    config["FILES"] = {
             "S2F_file_path": "",
             "config_file_path": "",
             "BR_file_path": ""
-        }
-        config["SHEETS"] = {
-            "HVE_work_sheet": "HVE 11_7 - J716C DVT-2 Build ru",
+    }
+    config["SHEETS"] = {
+            "HVE_work_sheet": "HVE 11_7",
             "S2F_sheet_name": "Shipments",
             "config_sheet_name": "FATP (C)",
-            "BR_HVE_sheet_name": "HVE 11_7 - J716C DVT-2 Build ru"
-        }
-        config["RANGE"] = {
+            "BR_HVE_sheet_name": "HVE 11_7"
+    }
+    config["RANGE"] = {
             "BR_start_row": "3",
             "BR_end_row": "14"
-        }
+    }
         #这里只是先在内存里写好稍后要写进"自动配置.ini"里的内容，但是房子还没盖好东西进不去
         #这里的config是个什么数据结构? 是个ConfigParser，但实质就是嵌套字典，调用的时候用config["FILES"]["S2F_file_path"]这样双重键
 
-        with open(CONFIG_PATH, "w", encoding="utf-8") as f: #这里是盖房子的地方，open方法发现没有的话会自动创建一个空白的 自动配置.ini
-            config.write(f) #并且写进去东西
-        print("✅ 首次运行：已自动生成配置文件")
+    with open(CONFIG_PATH, "w", encoding="utf-8") as f: #这里是盖房子的地方，open方法发现没有的话会自动创建一个空白的 自动配置.ini
+        config.write(f) #并且写进去东西
+    print("✅ 首次运行：已自动生成配置文件")
 
     config.read(CONFIG_PATH, encoding="utf-8")
     return config #这里return的到底是啥？**load_or_create_config () 返回：一个已经加载好所有配置的 config 对象
@@ -256,7 +256,7 @@ def main():
             hve_code = cell_value_concatenator(
                 cfg["BR_file_path"],
                 sheet_cfg["BR_HVE_sheet_name"],
-                cell1='D18',
+                cell1='A1',
                 cell2=f"B{row}"
             )
             print(f"✅ 生成HVE编码：{hve_code}")

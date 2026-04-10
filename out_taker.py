@@ -29,7 +29,7 @@ def out_taker(file_path: str,
         target_row = None
         if to_normalize_cfg(ws.cell(row, head_col_dic['Name']).value) == to_normalize_cfg(cfg): # 在Name列找目标cfg所在列
             target_row = row # 定为目标行
-            print(target_row)
+            # print(target_row)
             # print(type(ws.cell(target_row, head_col_dic['Input Qty']).value))
             break
     if not target_row:
