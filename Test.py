@@ -3,6 +3,26 @@ import os
 import configparser
 import openpyxl as xl
 from tkinter import Tk, filedialog, messagebox
+from openpyxl.utils import get_column_letter
+
+def falter(path: str,
+           work_sheet: str,
+           keyword,
+           search_col: str,
+           value_col: str
+           ):
+    wb = xl.load_workbook(path)
+    ws = wb[work_sheet]
+    plate = {}
+    head_dic = to_dic_head_col(ws)
+
+    search_col_letter = get_column_letter(head_dic[search_col])
+
+    for index, cell in enumerate(ws[search_col_letter]):
+       if to_normalize(keyword) in to_normalize(cell.value):
+           plate[cell.value] = ws.cell(row = index + 1, column = head_dic[value_col]).value
+    return plate
+
 
 def info_snatcher(path: str,
                   work_sheet: str,
@@ -122,8 +142,6 @@ def load_or_create_config(): #总结：创建或读取（已存在的话）"自�
     config = configparser.ConfigParser()
     #用来读写"自动配置.ini"的操作工具，有了它才能读 .ini 文件；写 .ini 文件；按 [分组] 读取内容；存键值对：key=value
 
-    # if not os.path.exists(CONFIG_PATH):
-        # 首次运行：自动生成配置
     config["FILES"] = {
             "S2F_file_path": "",
             "config_file_path": "",
@@ -189,7 +207,6 @@ def main():
     print("📌 功能：自动读取BR → 生成HVE → 匹配CFG → 扣库存 → 填写S2F")
     print("=" * 60)
     print()
-
     # 1. 加载配置
     config = load_or_create_config()
     cfg = config["FILES"] #这里cfg是啥？是自动配置.ini里["FILES"]的整段内容的字典形式，即cfg = {
@@ -342,9 +359,16 @@ def main():
 
     # 完成
     print("\n" + "=" * 60)
-    show_info("🎉 全部HVE分配任务已完成！")
-    print("✅ 程序运行结束")
+    print("🎉 全部HVE分配任务已完成！")
     print("=" * 60)
+
+
+    print(f"\n🚀 开始自动处理 PDID allocations")
+    PDID_lib = falter(cfg["config_file_path"], sheet_cfg["config_sheet_name"], "PDID""", search_col = "Name", value_col = "Input Qty")
+
+
+    print("✅ 程序运行结束")
+
 
 # ====================== 一键启动 ======================
 if __name__ == "__main__":
